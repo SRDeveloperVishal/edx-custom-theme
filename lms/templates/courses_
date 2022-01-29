@@ -1,0 +1,112 @@
+
+<%page expression_filter="h"/>
+<%namespace name='static' file='static_content.html'/>
+<%! from django.utils.translation import ugettext as _ %>
+
+
+<section class="container">
+    % if settings.FEATURES.get('COURSES_ARE_BROWSABLE'):
+      <section class="courses">
+<center>
+<div class="">
+              <input placeholder="Search..." id="search-users" class="search-users ml-3" style=" width: 30%;" type="text" autofocus>
+            </div>
+</center>
+<br><br>
+          <div class="row">
+
+            <div class="col-md-2 mb-2">
+              <button class="cat-2 register" style="width: 100%; white-space: nowrap; font-size: 0.8rem; padding: 0.5rem 0.2rem; margin-right: 1rem;">One Week <br>FDP/Workshop</button>
+            </div>
+
+            <div class="col-md-2 mb-2">
+              <button class="cat-5 register" style="width: 100%; white-space: nowrap; font-size: 0.8rem; padding: 0.5rem 0.2rem; margin-right: 1rem;">Two Week<br> FDP/Refreshers </button>
+            </div>
+            <div class="col-md-2 mb-2">
+              <button class="cat-1 register" style="width: 100%; white-space: nowrap; font-size: 0.8rem; padding: 0.5rem 0.2rem; margin-right: 1rem;">Short Term <br> Courses</button>
+            </div>
+
+
+
+            <div class="col-md-2 mb-2">
+              <button class="cat-3 register" style="width: 100%; white-space: nowrap; font-size: 0.8rem; padding: 0.5rem 0.2rem; margin-right: 1rem;">FIP / <br> Orientation</button>
+            </div>
+
+
+ <div class="col-md-2 mb-2">
+              <button class="cat-4 register" style="width: 100%; white-space: nowrap; font-size: 0.8rem; padding: 0.5rem 0.2rem; margin-right: 1rem;">FDP from other<br> Institutes</button>
+            </div>
+            <div class="col-md-2 mb-2">
+              <button class="cat-all register" style="width: 100%; white-space: nowrap; font-size: 0.8rem; padding: 0.5rem 0.2rem; margin-right: 1rem;">All<br> Courses</button>
+            </div>
+
+          </div>
+
+
+          <div class="row mt-3">
+            %for course in courses[:homepage_course_max]:      
+              <div class="col-md-3 col-sm-6 mb-4 user ${course.display_number_with_default[0:3]}">
+                <%include file="course.html" args="course=course" />
+              </div>  
+            %endfor
+          </div>
+
+          <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+           <script>          
+              $(document).ready(function(){
+                var activeCat = "";
+                function filterGroup(group){
+                  if(activeCat != group){
+                    $(".user").filter("."+group).show();
+                    $(".user").filter(":not(."+group+")").hide();
+                    activeCat = group;
+                  }
+                }
+                
+                $(".cat-all").click(function(){
+                  $(".user").show();
+                  activeCat = "all";
+                });
+
+
+                $(".cat-1").click(function(){ filterGroup("STP"); });
+                $(".cat-2").click(function(){ filterGroup("FDP"); });
+                $(".cat-3").click(function(){ filterGroup("FIP"); });
+                $(".cat-4").click(function(){ filterGroup("CERT"); });
+                $(".cat-5").click(function(){ filterGroup("RCA"); });
+              });
+           </script>
+
+           <!-- new search field -->
+           <script>
+             var searchUsers = document.querySelector('#search-users'),
+                  users = document.querySelectorAll('.user'),
+                  usersData = document.querySelectorAll('.user-data'),
+                  searchVal;
+
+              searchUsers.addEventListener('keyup', function() {
+                searchVal = this.value.toLowerCase();
+                
+                for (var i = 0; i < users.length; i++) {
+                  if (!searchVal || usersData[i].textContent.toLowerCase().indexOf(searchVal) > -1) {
+                    users[i].style['display'] = 'flex';
+                  }
+                  else {
+                    users[i].style['display'] = 'none';
+                  }
+                }
+              });
+           </script>
+
+     
+        
+      </section>
+    ## in case there are courses that are not shown on the homepage, a 'View all Courses' link should appear
+      % if homepage_course_max and len(courses) > homepage_course_max:
+      <div class="courses-more">
+        <a class="courses-more-cta" href="${marketing_link('COURSES')}"> ${_("View all Courses")} </a>
+      </div>
+    % endif
+    % endif
+</section>
